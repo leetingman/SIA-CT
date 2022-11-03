@@ -1,0 +1,51 @@
+
+
+1. 행정지역(Region)과 관심지역(AOI)을 관리하는 백엔드 시스템을 개발합니다.
+ -지리 정보의 타입은 Polygon을 사용합니다.
+
+2. 관심지역과 행정지역 데이터는 이름과 지리정보를 갖고 있어야합니다.
+
+3. 관심지역과 행정지역을 등록할 수 있어야합니다.
+
+4. 선택한 행정지역과 겹치는 관심지역의 목록을 조회할 수 있어야합니다
+
+
+API DOC.
+1.
+[POST] http://{ip address}/regions
+행정지역의 이름, 전체 지리 정보를 저장합니다.
+
+
+
+2.
+[POST] http://{ip address}/aois
+관심 지역의 이름, 전체 지리 정보를 저장합니다.
+
+
+3.
+[GET] http://{ip address}/regions/{region-id}/aois/intersects
+행정지역에 지리적으로 포함되는 관심지역을 조회합니다.
+
+
+docker
+$ docker run --name postgis -e POSTGRES_PASSWORD=1234 -p 5432:5432 -d postgis/postgis
+ docker run --name postgis -e POSTGRES_PASSWORD=siadb -p 5432:5432 -d postgis/postgis
+
+ docker run --name postgis -e POSTGRES_PASSWORD=siadb -p 5432:5432 -d postgis/postgis
+
+
+ docker run --name posttest -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgis/postgis
+postgis extension module
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS postgis_topology;
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
+
+
+database info
+postgresql
+username : postgres
+pass : 1234
+port : 5432
+
+

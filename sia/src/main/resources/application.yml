@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: sia
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
