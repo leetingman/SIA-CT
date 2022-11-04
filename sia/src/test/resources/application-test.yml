@@ -1,16 +1,20 @@
-spring:
-  datasource:
-    username: sa
-    password: 1234
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    hikari:
-      jdbc-url: jdbc:h2:mem:testdb
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-    hibernate:
-      naming:
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+#spring:
+#  profiles:
+#    active: test
+#  datasource:
+#    username: sa
+#    password: 1234
+#    url: jdbc:h2:mem:testdb
+#    driver-class-name: org.h2.Driver
+#    hikari:
+#      jdbc-url: jdbc:h2:mem:testdb
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.H2Dialect
+#    hibernate:
+#      naming:
+#        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+#        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+#profile:
+#  name: test

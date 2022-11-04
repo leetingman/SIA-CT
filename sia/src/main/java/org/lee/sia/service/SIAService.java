@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 import org.lee.sia.jpa.AOIEntity;
 import org.lee.sia.jpa.JPARepository;
@@ -58,13 +60,6 @@ public class SIAService {
 //    public String regionFindById(Long id){return repository.regionFindById(id);}
 
     //Logic Area --> WKT
-    public String areaToWKT(Coordinate[] area){
-        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
-        WKTWriter wf =new WKTWriter();
-        Geometry geom=factory.createPolygon(area);
-        return wf.write(geom);
-    }
-
 
     public ResponseAnRDto getInfo(Long id) {
         ResponseAnRDto dto=new ResponseAnRDto();
@@ -72,15 +67,42 @@ public class SIAService {
         String area = repository.regionFindById(id);
         //
         List<Object> list = repository.findAoisByArea(area);
-
+        AOIEntity entity;
         if(!list.isEmpty()){
             ModelMapper mapper =new ModelMapper();
             mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-            dto=mapper.map(list.get(0),ResponseAnRDto.class);
-            System.out.println(dto.getId()+dto.getName()+dto.getArea());
+            entity=mapper.map(list.get(0),AOIEntity.class);
+            System.out.println(entity.getId()+entity.getName()+entity.getArea());//after fix logs
+
+            dto=ResponseAnRDto.builder()
+                    .id(entity.getId())
+                    .name(entity.getName())
+                    .area(wktToArea(entity.getArea()))
+                    .build();
         }
         return dto;
 
 
+    }
+
+    public String areaToWKT(Coordinate[] area){
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        WKTWriter wf =new WKTWriter();
+        Geometry geom=factory.createPolygon(area);
+        return wf.write(geom);
+    }
+
+    public Coordinate[] wktToArea(String wkt){
+        WKTReader wr =new WKTReader();
+        Coordinate[] coord ;
+        Geometry geom= null;
+        try {
+            geom = wr.read(wkt);
+            coord=geom.getCoordinates();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return coord;
     }
 }
