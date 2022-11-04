@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lee.sia.jpa.AOIEntity;
+import org.lee.sia.jpa.RegionEntity;
 import org.lee.sia.service.SIAService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,30 +29,65 @@ public class ServiceTest {
     @Autowired
     SIAService service;
 
-
     /**
-     *id 1
-     * name 북한산
-     *area
-     * x lat
-     * y lng
-     {
-     "x": 127.02, "y": 37.742
-     },
-     {"x": 127.023    "y": 37.664 },
-     {"x": 126.945, "y": 37.605
-     }, {
-     "y": 37.692 },
-     {
-     "x": 127.02, "y": 37.742
-     } ]
-
-     * @return
+     * service findAll() unit test
+     * aoi 관심지역 이름 list 출력
+     * @throws Exception
+     * 첫번째 인덱스 북한산
      */
+    @Test
+    public void findAll() throws Exception{
+        List<AOIEntity> result =
+                service.findAll();
+        assertThat(result.get(0).getName()).isEqualTo("북한산");
+    }
 
-    public AOIEntity mockDataBuilder(){
 
 
+    @Test
+    public void saveAoi(){
+        AOIEntity entity=mockAoiDataBuilder();
+        service.saveAoi(entity);
+        assertThat(service.aOIFindById(entity.getId())).isEqualTo(entity.getName());
+    }
+
+    @Test
+    public void saveRegion(){
+
+        RegionEntity entity=mockRegionDataBuilder();
+        service.saveRegion(entity);
+        assertThat(service.regionFindById(entity.getId())).isEqualTo(entity.getName());
+
+    }
+
+
+    //RegionEntity init
+    public RegionEntity mockRegionDataBuilder(){
+
+
+        RegionEntity entity=new RegionEntity();
+        //point to Polygon
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        Coordinate[] coords =new Coordinate[4];
+
+        coords[0]=new Coordinate(127.02,37.742);
+        coords[1]=new Coordinate(127.023,37.664);
+        coords[2]=new Coordinate(126.945,37.692);
+        coords[3]=new Coordinate(127.02,37.742);
+
+        Polygon poly = factory.createPolygon(coords);
+
+        entity = new RegionEntity();
+        entity.setName("북한산");
+//        entity.setArea(poly);
+        entity.setArea(poly.toString());
+
+        return entity;
+    }
+
+
+    //AOIEntity init
+    public AOIEntity mockAoiDataBuilder(){
         AOIEntity entity=new AOIEntity();
         //point to Polygon
         GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
@@ -71,47 +107,4 @@ public class ServiceTest {
 
         return entity;
     }
-
-    @Test
-    public void saveArea(){
-//        try {
-//            mockDataBuilder();
-//            List<AOIEntity> list =
-//             repository.findAll();
-//            assertThat(list.get(0).getName()).isEqualTo("북한산");
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-//        List<AOIEntity> list =
-//             repository.findAll();
-//            assertThat(list.get(0).getName()).isEqualTo("북한산");
-
-
-
-    }
-
-    /**
-     * service findAll() unit test
-     * aoi 관심지역 이름 list 출력
-     * @throws Exception
-     * 첫번째 인덱스 북한산
-     */
-    @Test
-    public void findAll() throws Exception{
-        List<AOIEntity> result =
-                service.findAll();
-        assertThat(result.get(0).getName()).isEqualTo("북한산");
-    }
-
-
-
-    @Test
-    public void saveAoi(){
-        AOIEntity entity=mockDataBuilder();
-        service.saveAoi(entity);
-        assertThat(service.findById(entity.getId())).isEqualTo(entity.getName());
-    }
-
-
-
 }

@@ -32,7 +32,25 @@ public class JPARepositoryImpl implements JPARepository{
     }
 
     @Override
-    public String findById(Long id) {
+    public void saveRegion(RegionEntity entity) {
+        String jpql = "insert into Region(name,area) values(?,ST_GeomFromText(?))";
+        em.createNativeQuery(jpql)
+                .setParameter(1,entity.getName())
+                .setParameter(2,entity.getArea())
+                .executeUpdate();
+    }
+    @Override
+    public String aOIFindById(Long id) {
+        String jpql = "select a.name from Aoi a where a.id = ?1";
+        String name = em.createQuery(jpql).
+                setParameter(1,id).toString();
+
+        return name;
+
+    }
+
+    @Override
+    public String regionFindById(Long id) {
         String jpql = "select a.name from Aoi a where a.id = ?1";
         String name = em.createQuery(jpql).
                 setParameter(1,id).toString();

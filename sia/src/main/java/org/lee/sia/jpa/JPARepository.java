@@ -13,5 +13,8 @@ import java.util.List;
 public interface JPARepository  {
     List<AOIEntity> findAll();
     void saveAoi(AOIEntity entity);
-    String findById(Long id);
+    String aOIFindById(Long id);
+    String regionFindById(Long id);
+
+    void saveRegion(RegionEntity entity);
 }
