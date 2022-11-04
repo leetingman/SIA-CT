@@ -25,11 +25,15 @@ public class JPARepositoryImpl implements JPARepository{
 
     @Override
     @Transactional
-    public void saveAoi(AOIEntity entity) {
-        em.createNativeQuery("INSERT INTO aoi(name,area) VALUES(?,ST_GeomFromText(?))")
+    public Long saveAoi(AOIEntity entity) {
+        Query q =em.createNativeQuery("INSERT INTO aoi(name,area) VALUES(?,ST_GeomFromText(?)) returning id")
                 .setParameter(1,entity.getName())
-                .setParameter(2,entity.getArea())
-                .executeUpdate();
+                .setParameter(2,entity.getArea());
+
+        q.executeUpdate();
+        BigInteger biid = (BigInteger)q.getSingleResult();
+        long id = biid.longValue();
+        return id;
 
     }
 
@@ -47,6 +51,9 @@ public class JPARepositoryImpl implements JPARepository{
         long id = biid.longValue();
         return id;
     }
+
+
+
     @Override
     public String aOIFindById(Long id) {
         String jpql = "select a.name from Aoi a where a.id = ?1";

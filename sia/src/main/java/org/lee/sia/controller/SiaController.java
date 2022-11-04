@@ -19,6 +19,11 @@ public class SiaController {
         ResponseDto result=service.saveRegion(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+    @PostMapping("/aois")
+    public ResponseEntity<ResponseDto> saveAois(@RequestBody RequestDto dto){
+        ResponseDto result=service.saveAoi(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
 
 
 }

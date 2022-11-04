@@ -12,7 +12,7 @@ import java.util.List;
 // and provides a method to create EntityManager instances.
 public interface JPARepository  {
     List<AOIEntity> findAll();
-    void saveAoi(AOIEntity entity);
+    Long saveAoi(AOIEntity entity);
     String aOIFindById(Long id);
     String regionFindById(Long id);
 

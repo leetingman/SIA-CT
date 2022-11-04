@@ -24,7 +24,20 @@ public class SIAService {
 
 
     public List<AOIEntity> findAll(){return repository.findAll(); }
-    public void saveAoi(AOIEntity entity){repository.saveAoi(entity);}
+    public ResponseDto saveAoi(RequestDto dto){
+        //mapping
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        AOIEntity entity = mapper.map(dto,AOIEntity.class);
+        entity.setArea(areaToWKT(dto.getArea()));
+        //save
+        Long id=repository.saveAoi(entity);
+        //return result
+        ResponseDto result =new ResponseDto();
+        result.setId(id);
+        return result;
+
+    }
     public ResponseDto saveRegion(RequestDto dto)
     {
         //Mapping
