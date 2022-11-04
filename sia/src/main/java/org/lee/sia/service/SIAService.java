@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.lee.sia.jpa.AOIEntity;
 import org.lee.sia.jpa.JPARepository;
 import org.lee.sia.jpa.RegionEntity;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class SIAService {
     @Autowired
     private JPARepository repository;
@@ -67,22 +69,10 @@ public class SIAService {
         String area = repository.regionFindById(id);
         //
         List<Object> list = repository.findAoisByArea(area);
-        AOIEntity entity;
         if(!list.isEmpty()){
-            ModelMapper mapper =new ModelMapper();
-            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-            entity=mapper.map(list.get(0),AOIEntity.class);
-            System.out.println(entity.getId()+entity.getName()+entity.getArea());//after fix logs
-
-            dto=ResponseAnRDto.builder()
-                    .id(entity.getId())
-                    .name(entity.getName())
-                    .area(wktToArea(entity.getArea()))
-                    .build();
+            dto=dtoMapperBuilder(list.get(0));
         }
         return dto;
-
-
     }
 
     public String areaToWKT(Coordinate[] area){
@@ -90,6 +80,16 @@ public class SIAService {
         WKTWriter wf =new WKTWriter();
         Geometry geom=factory.createPolygon(area);
         return wf.write(geom);
+    }
+
+    public String pointToWKT(double x,double y){
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        WKTWriter wf =new WKTWriter();
+        Coordinate coord = new Coordinate();
+        coord.x=x;
+        coord.y=y;
+        Geometry geom=factory.createPoint(coord);
+        return  wf.write(geom);
     }
 
     public Coordinate[] wktToArea(String wkt){
@@ -109,28 +109,27 @@ public class SIAService {
     public ResponseAnRDto getAreaByDistance(Double x, Double y) {
         ResponseAnRDto dto=new ResponseAnRDto();
 
-        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
-        WKTWriter wf =new WKTWriter();
-        Coordinate coord = new Coordinate();
-        coord.x=x;
-        coord.y=y;
-        Geometry geom=factory.createPoint(coord);
-        String point = wf.write(geom);
+        String point =pointToWKT(x,y);
+
         Object o=repository.getAreaByDistance(point);
-        AOIEntity entity ;
+        dto=dtoMapperBuilder(o);
+
+        return dto;
+
+    }
+    //dto 생성기
+    public ResponseAnRDto dtoMapperBuilder(Object o){
+        ResponseAnRDto dto;
+        AOIEntity entity;
         ModelMapper mapper =new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         entity=mapper.map(o,AOIEntity.class);
-        System.out.println(entity.getId()+entity.getName()+entity.getArea());//after fix logs
+        log.info(entity.getId()+entity.getName()+entity.getArea());
         dto=ResponseAnRDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .area(wktToArea(entity.getArea()))
                 .build();
-
         return dto;
-
-
-
     }
 }
