@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.List;
 
 @Repository
@@ -32,12 +34,18 @@ public class JPARepositoryImpl implements JPARepository{
     }
 
     @Override
-    public void saveRegion(RegionEntity entity) {
-        String jpql = "insert into Region(name,area) values(?,ST_GeomFromText(?))";
-        em.createNativeQuery(jpql)
+    public Long saveRegion(RegionEntity entity) {
+        String jpql = "insert into Region(name,area) values(?,ST_GeomFromText(?)) returning id";
+
+        Query q =em.createNativeQuery(jpql, Long.class)
                 .setParameter(1,entity.getName())
                 .setParameter(2,entity.getArea())
-                .executeUpdate();
+                ;
+        q.executeUpdate();
+
+        BigInteger biid = (BigInteger)q.getSingleResult();
+        long id = biid.longValue();
+        return id;
     }
     @Override
     public String aOIFindById(Long id) {

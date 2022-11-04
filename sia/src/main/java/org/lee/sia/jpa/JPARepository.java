@@ -16,5 +16,5 @@ public interface JPARepository  {
     String aOIFindById(Long id);
     String regionFindById(Long id);
 
-    void saveRegion(RegionEntity entity);
+    Long saveRegion(RegionEntity entity);
 }
