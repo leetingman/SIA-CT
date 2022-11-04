@@ -9,6 +9,7 @@ import org.lee.sia.jpa.AOIEntity;
 import org.lee.sia.jpa.JPARepository;
 import org.lee.sia.jpa.RegionEntity;
 import org.lee.sia.vo.RequestDto;
+import org.lee.sia.vo.ResponseAnRDto;
 import org.lee.sia.vo.ResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -53,8 +54,8 @@ public class SIAService {
         return result;
     }
 
-    public String aOIFindById(Long id){return repository.aOIFindById(id);}
-    public String regionFindById(Long id){return repository.regionFindById(id);}
+//    public String aOIFindById(Long id){return repository.aOIFindById(id);}
+//    public String regionFindById(Long id){return repository.regionFindById(id);}
 
     //Logic Area --> WKT
     public String areaToWKT(Coordinate[] area){
@@ -65,4 +66,21 @@ public class SIAService {
     }
 
 
+    public ResponseAnRDto getInfo(Long id) {
+        ResponseAnRDto dto=new ResponseAnRDto();
+        //id로 지역찾기
+        String area = repository.regionFindById(id);
+        //
+        List<Object> list = repository.findAoisByArea(area);
+
+        if(!list.isEmpty()){
+            ModelMapper mapper =new ModelMapper();
+            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+            dto=mapper.map(list.get(0),ResponseAnRDto.class);
+            System.out.println(dto.getId()+dto.getName()+dto.getArea());
+        }
+        return dto;
+
+
+    }
 }

@@ -17,4 +17,6 @@ public interface JPARepository  {
     String regionFindById(Long id);
 
     Long saveRegion(RegionEntity entity);
+
+    List<Object> findAoisByArea(String area);
 }

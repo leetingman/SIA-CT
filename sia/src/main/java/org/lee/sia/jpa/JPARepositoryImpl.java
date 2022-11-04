@@ -52,6 +52,16 @@ public class JPARepositoryImpl implements JPARepository{
         return id;
     }
 
+    @Override
+    public List<Object> findAoisByArea(String area) {
+
+        String jpql ="select a.Id as Id,a.name as name, ST_asText(a.area) as area from aoi a where ST_Within(a.area,ST_GeomFromText(?,4326)) = true ";
+        List<Object> list =
+        em.createNativeQuery(jpql, AOIEntity.class)
+                .setParameter(1,area)
+                .getResultList();
+        return list;
+    }
 
 
     @Override
@@ -66,11 +76,10 @@ public class JPARepositoryImpl implements JPARepository{
 
     @Override
     public String regionFindById(Long id) {
-        String jpql = "select a.name from Aoi a where a.id = ?1";
-        String name = em.createQuery(jpql).
-                setParameter(1,id).toString();
-
-        return name;
+        String jpql ="select ST_asText(r.area) from Region r where r.Id = ?1";
+        String area=em.createNativeQuery(jpql).
+                setParameter(1,Long.valueOf(1)).getSingleResult().toString();
+        return area;
 
     }
 }

@@ -2,13 +2,12 @@ package org.lee.sia.controller;
 
 import org.lee.sia.service.SIAService;
 import org.lee.sia.vo.RequestDto;
+import org.lee.sia.vo.ResponseAnRDto;
 import org.lee.sia.vo.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SiaController {
@@ -24,6 +23,17 @@ public class SiaController {
         ResponseDto result=service.saveAoi(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+
+    @GetMapping("/region/{id}/aois/intersects")
+    public ResponseEntity<ResponseAnRDto> getInfo(@PathVariable("id") Long id){
+
+
+        ResponseAnRDto result = service.getInfo(id);
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
 
 
 }
