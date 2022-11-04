@@ -105,4 +105,32 @@ public class SIAService {
 
         return coord;
     }
+
+    public ResponseAnRDto getAreaByDistance(Double x, Double y) {
+        ResponseAnRDto dto=new ResponseAnRDto();
+
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        WKTWriter wf =new WKTWriter();
+        Coordinate coord = new Coordinate();
+        coord.x=x;
+        coord.y=y;
+        Geometry geom=factory.createPoint(coord);
+        String point = wf.write(geom);
+        Object o=repository.getAreaByDistance(point);
+        AOIEntity entity ;
+        ModelMapper mapper =new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        entity=mapper.map(o,AOIEntity.class);
+        System.out.println(entity.getId()+entity.getName()+entity.getArea());//after fix logs
+        dto=ResponseAnRDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .area(wktToArea(entity.getArea()))
+                .build();
+
+        return dto;
+
+
+
+    }
 }

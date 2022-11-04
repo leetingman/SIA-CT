@@ -34,6 +34,14 @@ public class SiaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
+//    @GetMapping("/aois?lat={lat}&long={lon}")
+    @GetMapping("/aois")
+    public ResponseEntity<ResponseAnRDto> getDistance(@RequestParam(name="lat") Double x,@RequestParam ("long") Double y){
+        ResponseAnRDto result = service.getAreaByDistance(x,y);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
 
 
 }

@@ -19,4 +19,6 @@ public interface JPARepository  {
     Long saveRegion(RegionEntity entity);
 
     List<Object> findAoisByArea(String area);
+
+    Object getAreaByDistance(String point);
 }
