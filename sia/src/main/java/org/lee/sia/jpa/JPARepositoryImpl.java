@@ -28,13 +28,13 @@ public class JPARepositoryImpl implements JPARepository{
     @Override
     @Transactional
     public Long saveAoi(AOIEntity entity) {
-        Query q =em.createNativeQuery("INSERT INTO aoi(name,area) VALUES(?,ST_GeomFromText(?)) returning id")
+//        em.createNativeQuery("INSERT INTO Aoi(name,area) VALUES(?,ST_GeomFromText(?)) returning Id")
+        em.createNativeQuery("INSERT INTO Aoi(name,area) VALUES(?,ST_GeomFromText(?))")
                 .setParameter(1,entity.getName())
-                .setParameter(2,entity.getArea());
+                .setParameter(2,entity.getArea()).executeUpdate();
+        long id =(Long)em.createQuery("select max(a.Id) from Aoi a").getSingleResult();
 
-        q.executeUpdate();
-        BigInteger biid = (BigInteger)q.getSingleResult();
-        long id = biid.longValue();
+
         return id;
 
     }
@@ -42,7 +42,7 @@ public class JPARepositoryImpl implements JPARepository{
     @Override
     @Transactional
     public Long saveRegion(RegionEntity entity) {
-        String jpql = "insert into Region(name,area) values(?,ST_GeomFromText(?)) returning id";
+        String jpql = "insert into Region(name,area) values(?,ST_GeomFromText(?))";
 
         Query q =em.createNativeQuery(jpql, Long.class)
                 .setParameter(1,entity.getName())
@@ -50,8 +50,8 @@ public class JPARepositoryImpl implements JPARepository{
                 ;
         q.executeUpdate();
 
-        BigInteger biid = (BigInteger)q.getSingleResult();
-        long id = biid.longValue();
+        long id =(Long)em.createQuery("select max(r.id) from Region r").getSingleResult();
+
         return id;
     }
 
@@ -78,7 +78,7 @@ public class JPARepositoryImpl implements JPARepository{
 
     @Override
     public String regionFindById(Long id) {
-        String jpql ="select ST_asText(r.area) from Region r where r.Id = ?1";
+        String jpql ="select ST_asText(r.area) from Region r where r.id = ?1";
         String area=em.createNativeQuery(jpql).
                 setParameter(1,Long.valueOf(1)).getSingleResult().toString();
         return area;
