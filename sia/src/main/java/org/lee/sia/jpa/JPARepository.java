@@ -12,5 +12,6 @@ import java.util.List;
 // and provides a method to create EntityManager instances.
 public interface JPARepository  {
     List<AOIEntity> findAll();
-
+    void saveAoi(AOIEntity entity);
+    String findById(Long id);
 }

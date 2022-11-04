@@ -13,7 +13,7 @@ public class SIAService {
     private JPARepository repository;
 
 
-    public List<AOIEntity> findAll(){
-        return repository.findAll();
-    }
+    public List<AOIEntity> findAll(){return repository.findAll(); }
+    public void saveAoi(AOIEntity entity){repository.saveAoi(entity);}
+    public String findById(Long id){return repository.findById(id);}
 }

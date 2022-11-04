@@ -101,7 +101,15 @@ public class ServiceTest {
         List<AOIEntity> result =
                 service.findAll();
         assertThat(result.get(0).getName()).isEqualTo("북한산");
+    }
 
+
+
+    @Test
+    public void saveAoi(){
+        AOIEntity entity=mockDataBuilder();
+        service.saveAoi(entity);
+        assertThat(service.findById(entity.getId())).isEqualTo(entity.getName());
     }
 
 
