@@ -49,6 +49,11 @@ pass : 1234
 port : 5432
 
 
+
+
+
+
+
 과제 성과
 행정지역의 이름, 전체 지리 정보를 저장합니다. (0)
 관심 지역의 이름, 전체 지리 정보를 저장합니다.(0)
@@ -61,9 +66,100 @@ port : 5432
 못한것
 도커 컨테이너 성공(0) -->프로젝트 연결 ....못한것(X)
 
+//notion 에 따로 정리
+11-07-2022
+docker 정리
+
+docker run [OPTIONS] IMAGE[:TAG|@DIGEST][COMMAND][ARG...]
+
+OPTIONS
+-d
+detached mode 흔히 말하는 백그라운드 모드
+-p
+호스트와 컨테이너의 포트 연결 (포워딩)  (host PC port : container response port)
+-v
+호스트와 컨테이너의 디렉토리를 연결(마운트)
+-e
+컨테이너 내에서 사용할 환경변수 설정
+-name
+컨테이너 이름 설정
+-rm
+프로세스 종료시 컨테이너 자동제거
+-it -i와-t를 동시에 사용한 것으로 터미널 입력을 위한 옵션
+-link 컨테이너 연결[컨테이너명:별칭]
+
+$ docker -container ls & docker ps
+docker container list
+$ docker container ls -a
+container record? history
+
+
+
+$ docker run --name postgis -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgis/postgis
+
+
+$ docker images
+docker 이미지 확인
+
+에러로그
+✘ nommml@Tingmin-Ls-MacBook-Air  ~  docker run --name postgis -e POSTGRES_PASSWORD=1234 -p 5432:5432 -d postgis/postgis
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+2477c43876259c2b5b4e5a989edb195cbcdf2e9b6f98fb568309173e4525deeb
+이미 포트 사용중
+
+docker: Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:5432 -> 0.0.0.0:0: listen tcp 0.0.0.0:5432: bind: address already in use.
+ ✘ nommml@Tingmin-Ls-MacBook-Air  ~  docker run --name postgis -e POSTGRES_PASSWORD=1234 -p 15432:5432 -d postgis/postgis
+docker: Error response from daemon: Conflict. The container name "/postgis" is already in use by container "2477c43876259c2b5b4e5a989edb195cbcdf2e9b6f98fb568309173e4525deeb". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+
+포트 변경
+
+ ✘ nommml@Tingmin-Ls-MacBook-Air  ~  docker ps -a
+CONTAINER ID   IMAGE             COMMAND                  CREATED              STATUS    PORTS     NAMES
+2477c4387625   postgis/postgis   "docker-entrypoint.s…"   About a minute ago   Created             postgis
+
+STATUS Created 이름 이미 사용중
+삭제
+ nommml@Tingmin-Ls-MacBook-Air  ~  docker container rm 2477c4387625
+2477c4387625
+
+
+ nommml@Tingmin-Ls-MacBook-Air  ~   docker run --name postgis -e POSTGRES_PASSWORD=1234 -p 15432:5432 -d postgis/postgis
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+fce139da8c30027baa4fc18ae14b668b3a0e24de0fc8c646af246bfc14c9c1e9
+
+ nommml@Tingmin-Ls-MacBook-Air  ~  docker ps -a
+CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                     NAMES
+fce139da8c30   postgis/postgis   "docker-entrypoint.s…"   15 seconds ago   Up 14 seconds   0.0.0.0:15432->5432/tcp   postgis
+
+STATUS UP상태 일때 실행중
+
+
+$ docker exec -it fce139da8c30 /bin/bash
+실행
+
+$ psql -U postgres
+postgre 실행
+
+$ mvn clean compile package -DskipTests=true
+빌드
+
+$ docker build --tag orangeelee/sia:1.0 .
+
+denied: requested access to the resource is denied
+- docker login
 
 
 
 
+$ docker run --name postgis -e POSTGRES_PASSWORD=postgres -p 15432:5432 -d postgis/postgis
 
 
+
+
+CREATE TABLE aoi(id SERIAL PRIMARY KEY, name text,
+area geometry('Polygon', 4326) );
+
+
+CREATE TABLE region( id SERIAL PRIMARY KEY,name text,
+area geometry('Polygon', 4326));
